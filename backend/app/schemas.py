@@ -97,6 +97,7 @@ class FixedExpenseUpdate(BaseModel):
     category: Optional[str] = None
     recurring: Optional[str] = None
     day_of_month: Optional[int] = None
+    last_paid_date: Optional[datetime] = None
     active: Optional[bool] = None
 
 class FixedExpenseResponse(BaseModel):
@@ -106,6 +107,7 @@ class FixedExpenseResponse(BaseModel):
     category: str
     recurring: str
     day_of_month: Optional[int] = None
+    last_paid_date: Optional[datetime] = None
     active: bool
     created_at: datetime
     

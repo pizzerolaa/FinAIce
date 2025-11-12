@@ -145,6 +145,10 @@ export const fixedExpensesAPI = {
     const response = await api.put(`/api/fixed-expenses/${expenseId}`, data)
     return response.data
   },
+  markAsPaid: async (expenseId: number) => {
+    const response = await api.post(`/api/fixed-expenses/${expenseId}/mark-paid`)
+    return response.data
+  },
   delete: async (expenseId: number) => {
     await api.delete(`/api/fixed-expenses/${expenseId}`)
   },
@@ -164,6 +168,10 @@ export const recommendationsAPI = {
     const response = await api.post('/api/recommendations/simulate', null, {
       params: { category, reduction_percent: reductionPercent },
     })
+    return response.data
+  },
+  debug: async () => {
+    const response = await api.get('/api/recommendations/debug')
     return response.data
   },
 }

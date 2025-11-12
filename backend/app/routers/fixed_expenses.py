@@ -100,9 +100,35 @@ async def update_fixed_expense(
                 detail="day_of_month must be between 1 and 31"
             )
         expense.day_of_month = expense_data.day_of_month
+    if expense_data.last_paid_date is not None:
+        expense.last_paid_date = expense_data.last_paid_date
     if expense_data.active is not None:
         expense.active = expense_data.active
     
+    db.commit()
+    db.refresh(expense)
+    return expense
+
+@router.post("/{expense_id}/mark-paid", response_model=FixedExpenseResponse)
+async def mark_expense_as_paid(
+    expense_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Mark a fixed expense as paid for current period"""
+    from datetime import datetime
+    
+    expense = db.query(FixedExpense).filter(
+        FixedExpense.id == expense_id,
+        FixedExpense.user_id == current_user.id
+    ).first()
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Fixed expense not found"
+        )
+    
+    expense.last_paid_date = datetime.utcnow()
     db.commit()
     db.refresh(expense)
     return expense

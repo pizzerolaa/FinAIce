@@ -71,6 +71,7 @@ class FixedExpense(Base):
     category = Column(String, nullable=False)
     recurring = Column(String, default="monthly")  # monthly, weekly, yearly
     day_of_month = Column(Integer, nullable=True)  # Day of month for monthly expenses (1-31)
+    last_paid_date = Column(DateTime(timezone=True), nullable=True)  # Last time this was marked as paid
     active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     

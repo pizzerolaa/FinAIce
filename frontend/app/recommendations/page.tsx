@@ -17,6 +17,7 @@ export default function RecommendationsPage() {
     category: '',
     reduction_percent: '20',
   })
+  const [debugInfo, setDebugInfo] = useState<any>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -38,6 +39,17 @@ export default function RecommendationsPage() {
       console.error('Error loading recommendations:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadDebugInfo = async () => {
+    try {
+      const data = await recommendationsAPI.debug()
+      setDebugInfo(data)
+      alert(`Debug Info:\n\nTotal Transactions: ${data.total_transactions}\nWith Category: ${data.transactions_with_category}\nExpenses: ${data.expense_transactions}\nHas Data: ${data.has_data}`)
+    } catch (error) {
+      console.error('Error loading debug info:', error)
+      alert('Error loading debug info')
     }
   }
 
@@ -96,7 +108,15 @@ export default function RecommendationsPage() {
   return (
     <Layout>
       <div className="px-4 py-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Financial Recommendations</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Financial Recommendations</h1>
+          <button
+            onClick={loadDebugInfo}
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm"
+          >
+            Debug Info
+          </button>
+        </div>
 
         {/* Recommendations */}
         <div className="mb-8">
@@ -130,7 +150,7 @@ export default function RecommendationsPage() {
 
         {/* Savings Simulator */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Savings Simulator</h2>
+          <h2 className="text-gray-600 text-xl font-semibold mb-4">Savings Simulator</h2>
           <p className="text-gray-600 mb-4">
             See how much you could save by reducing spending in a specific category.
           </p>
@@ -185,21 +205,21 @@ export default function RecommendationsPage() {
 
           {simulationResult && (
             <div className="bg-primary-50 border border-primary-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Simulation Results</h3>
+              <h3 className="text-black text-lg font-semibold mb-4">Simulation Results</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Category</p>
-                  <p className="text-lg font-semibold">{simulationResult.category}</p>
+                  <p className="text-lg font-semibold text-gray-900">{simulationResult.category}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Current Spending</p>
-                  <p className="text-lg font-semibold">
+                  <p className="text-lg font-semibold text-gray-900">
                     ${simulationResult.current_spending.toFixed(2)} MXN
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Reduction</p>
-                  <p className="text-lg font-semibold">{simulationResult.reduction_percent}%</p>
+                  <p className="text-lg font-semibold text-gray-900">{simulationResult.reduction_percent}%</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Potential Saving</p>
@@ -209,7 +229,7 @@ export default function RecommendationsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Current Available</p>
-                  <p className="text-lg font-semibold">
+                  <p className={`text-lg font-semibold ${simulationResult.current_available >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     ${simulationResult.current_available.toFixed(2)} MXN
                   </p>
                 </div>
